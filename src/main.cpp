@@ -27,13 +27,6 @@ enum State {
   SLOW
 };
 
-// TODO: acceleration and deceleration curves are very slow at the slow end
-// and fast at the fast end
-// the curves should be more linear
-// TASKS:
-// - read pots for acc/dec times
-// - read pots for fast/slow speeds
-
 int potVal = 0;
 int previousPotVal = 0;
 
