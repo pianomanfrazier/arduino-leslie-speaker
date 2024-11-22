@@ -17,9 +17,25 @@
 #define EN_PIN 12
 #define STEPS_PER_ROTATION 200*16 // 1/8 microstepping
 
-#define FAST_SPEED 30
-#define SLOW_SPEED 300
-#define STOP_SPEED 600
+/**
+ * Gear ratio of 3 to 1
+ * need rpms fast 380rpm to slow 30rpm
+ * 900 -> 10RPM
+ * 300 -> 30RPM
+ * 150 -> 60RPM
+ * 75 -> 120RPM
+ * 30 -> 240RPM
+*/
+
+#define FAST_SPEED 60
+#define SLOW_SPEED 900
+#define STOP_SPEED 2400
+
+// 20 -> 2 s from FAST to STOP
+// 40 -> 3 s
+// 60 -> 4 s
+// 100 -> 6 s
+#define ACC_FACTOR 40
 
 enum State {
   STOP,
@@ -30,7 +46,6 @@ enum State {
 int potVal = 0;
 int previousPotVal = 0;
 
-unsigned long period = 500;
 unsigned long t = 0;
 unsigned long last = 0;
 unsigned long delta = 0;
@@ -38,6 +53,7 @@ unsigned long input_delta = 0;
 
 State currentState = State::STOP;
 unsigned long stopPoint = STOP_SPEED;
+unsigned long period = STOP_SPEED;
 
 State readState();
 void outputLED(State);
@@ -98,13 +114,21 @@ void updateStopPoint() {
 
 void updatePeriod() {
   if (input_delta > 10000) {
-
+    // DECELERATE
     if (period < stopPoint) {
-      period += 1;
+      unsigned int val = int(trunc(period/ACC_FACTOR));
+      period += (1 + val);
+      // This can overshoot the STOP_SPEED and not stop
+      if (period > STOP_SPEED - val - 2) {
+        period = STOP_SPEED;
+      }
     }
+    // ACCELERATE
     if (period > stopPoint) {
-      period -= 1;
+      period -= (1 + int(trunc(period/ACC_FACTOR)));
     }
+
+
     if (period == STOP_SPEED) {
       digitalWrite(EN_PIN, HIGH);
     } else {
