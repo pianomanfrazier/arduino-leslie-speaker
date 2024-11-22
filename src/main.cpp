@@ -20,15 +20,19 @@
 /**
  * Gear ratio of 3 to 1
  * need rpms fast 380rpm to slow 30rpm
- * 900 -> 10RPM
+ * 1200 -> 7.5RPM * 3 = 22.5
+ * 900 -> 10RPM * 3 = 30
+ * 600 -> 15RPM * 3 = 45
  * 300 -> 30RPM
  * 150 -> 60RPM
- * 75 -> 120RPM
- * 30 -> 240RPM
+ * 75 -> 108RPM * 3 = 324
+ * 60 -> 125RPM * 3 = 375
+ * 46 -> 133RPM * 3 = 400
+ * 30 -> 227RPM
 */
 
-#define FAST_SPEED 60
-#define SLOW_SPEED 900
+#define FAST_SPEED 46 
+#define SLOW_SPEED 600
 #define STOP_SPEED 2400
 
 // 20 -> 2 s from FAST to STOP
